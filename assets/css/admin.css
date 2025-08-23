@@ -458,6 +458,31 @@
   border-bottom: 1px solid #ddd;
 }
 
+/* Size type selector styles */
+.ctd-size-type-selector {
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.ctd-size-type-selector label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #23282d;
+}
+
+.ctd-size-type-select {
+  width: 200px;
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #fff;
+}
+
 /* FIXED: Update the color size options grid for better alignment */
 .ctd-color-size-options {
   display: grid;
@@ -479,6 +504,7 @@
   background-color: #fff;
   min-height: 90px;
   text-align: center;
+  position: relative;
 }
 
 /* FIXED: Checkbox label alignment */
@@ -495,7 +521,7 @@
 
 /* FIXED: Checkbox alignment - specifically for all sizes including 2XS */
 .ctd-color-size-item label input[type="checkbox"] {
-  margin: 0 5px 0 0;
+  margin: 0 5px 0 0 !important;
   vertical-align: middle;
   position: relative;
   top: 0;
@@ -558,7 +584,7 @@
   opacity: 0 !important;
 }
 
-/* Ensure Firefox also doesn't show spinners */ \
+/* Ensure Firefox also doesn't show spinners */
 @-moz-document url-prefix() {
   .ctd-inventory-input {
     -moz-appearance: textfield !important;
@@ -566,10 +592,25 @@
 }
 
 .ctd-remove-custom-size {
-  margin-left: 5px;
-  color: #a00;
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 20px;
+  height: 20px;
+  background: #dc3232;
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 18px;
+  font-size: 12px;
+  cursor: pointer;
   text-decoration: none;
   font-weight: bold;
+}
+
+.ctd-remove-custom-size:hover {
+  background: #b32d2e;
+  color: white;
 }
 
 .ctd-add-custom-size-container {
@@ -577,7 +618,6 @@
   gap: 10px;
   align-items: center;
   margin-top: 10px;
-  margin-left: 15px; /* Add margin to prevent overlap */
 }
 
 .ctd-custom-size-input {
@@ -775,6 +815,10 @@
   .ctd-database-actions .ctd-button {
     width: 100%;
     text-align: center;
+  }
+
+  .ctd-size-type-select {
+    width: 100%;
   }
 }
 

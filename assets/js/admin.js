@@ -2,6 +2,13 @@
  * Custom T-Shirt Designer Admin Scripts
  */
 jQuery(document).ready(($) => {
+  // Size type definitions
+  const sizeTypes = {
+    mens: ["2XS", "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"],
+    womens: ["2", "4", "6", "8", "10", "12", "14", "16", "18", "20", "22"],
+    kids: ["2", "4", "6", "8", "10", "12", "14", "16"]
+  };
+
   // Initialize color picker for existing color inputs
   initColorPickers()
 
@@ -28,29 +35,50 @@ jQuery(document).ready(($) => {
     })
   }
 
+  // Create size type selector HTML
+  function createSizeTypeSelector(colorId) {
+    return `
+      <div class="ctd-size-type-selector">
+        <label>Size Type:</label>
+        <select class="ctd-size-type-select" data-color="${colorId}">
+          <option value="mens">Men's Sizes</option>
+          <option value="womens">Women's Sizes</option>
+          <option value="kids">Kids Sizes</option>
+        </select>
+      </div>
+    `
+  }
+
+  // Create size options HTML
+  function createSizeOptionsHtml(sizes, colorId) {
+    let html = ""
+    sizes.forEach((size) => {
+      html += `
+        <div class="ctd-color-size-item">
+          <label>
+            <input type="checkbox" name="_ctd_color_sizes[${colorId}][]" value="${size}" checked> 
+            <span>${size}</span>
+          </label>
+          <div class="ctd-size-inventory">
+            <input type="text" name="_ctd_inventory[${colorId}][${size}]" placeholder="Qty" value="0" min="0" class="ctd-inventory-input">
+          </div>
+        </div>
+      `
+    })
+    return html
+  }
+
   // Add color button functionality
   $("#ctd_add_color").on("click", () => {
     // Generate a unique temporary ID for the new color
     const tempId = "new_color_" + Math.floor(Math.random() * 10000)
 
-    // Updated default sizes to include 4XL and 5XL
-    const defaultSizes = ["2XS", "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"]
+    // Use default men's sizes
+    const defaultSizes = sizeTypes.mens
 
-    // Create size options HTML
-    let sizeOptionsHtml = ""
-    defaultSizes.forEach((size) => {
-      sizeOptionsHtml += `
-        <div class="ctd-color-size-item">
-          <label>
-            <input type="checkbox" name="_ctd_color_sizes[${tempId}][]" value="${size}" checked> 
-            ${size}
-          </label>
-          <div class="ctd-size-inventory">
-            <input type="text" name="_ctd_inventory[${tempId}][${size}]" placeholder="Qty" value="0" min="0" class="ctd-inventory-input">
-          </div>
-        </div>
-      `
-    })
+    // Create size type selector and options
+    const sizeTypeSelector = createSizeTypeSelector(tempId)
+    const sizeOptionsHtml = createSizeOptionsHtml(defaultSizes, tempId)
 
     // Create the color row HTML
     const colorRowHtml = `
@@ -65,7 +93,8 @@ jQuery(document).ready(($) => {
         <!-- Size options for this color -->
         <div class="ctd-color-sizes">
           <h4>Sizes for this color</h4>
-          <div class="ctd-color-size-options">
+          ${sizeTypeSelector}
+          <div class="ctd-color-size-options" data-color="${tempId}">
             ${sizeOptionsHtml}
           </div>
           <div class="ctd-add-custom-size-container">
@@ -109,10 +138,32 @@ jQuery(document).ready(($) => {
         })
 
         newRow.find(".ctd-add-custom-size").attr("data-color", newColorKey)
+        newRow.find(".ctd-size-type-select").attr("data-color", newColorKey)
+        newRow.find(".ctd-color-size-options").attr("data-color", newColorKey)
       }
     })
 
     // Ensure the form is marked as changed
+    $("form#post").trigger("change")
+  })
+
+  // Handle size type change
+  $(document).on("change", ".ctd-size-type-select", function() {
+    const sizeType = $(this).val()
+    const colorId = $(this).data("color")
+    const container = $(this).closest(".ctd-color-sizes").find(".ctd-color-size-options")
+    
+    // Get the sizes for the selected type
+    const sizes = sizeTypes[sizeType] || sizeTypes.mens
+    
+    // Clear existing size options
+    container.empty()
+    
+    // Add new size options with proper HTML structure
+    const newSizeOptionsHtml = createSizeOptionsHtml(sizes, colorId)
+    container.html(newSizeOptionsHtml)
+    
+    // Mark form as changed
     $("form#post").trigger("change")
   })
 
@@ -146,7 +197,7 @@ jQuery(document).ready(($) => {
         <div class="ctd-color-size-item ctd-custom-size-item">
           <label>
             <input type="checkbox" name="_ctd_color_sizes[${colorKey}][]" value="${customSize}" checked="checked"> 
-            ${customSize}
+            <span>${customSize}</span>
           </label>
           <div class="ctd-size-inventory">
             <input type="text" name="_ctd_inventory[${colorKey}][${customSize}]" placeholder="Qty" value="0" min="0" class="ctd-inventory-input">
@@ -169,6 +220,12 @@ jQuery(document).ready(($) => {
     $(this).closest(".ctd-color-size-item").remove()
 
     // Ensure the form is marked as changed
+    $("form#post").trigger("change")
+  })
+
+  // Handle checkbox changes properly
+  $(document).on("change", "input[type='checkbox']", function() {
+    // Mark the form as changed
     $("form#post").trigger("change")
   })
 
@@ -227,12 +284,6 @@ jQuery(document).ready(($) => {
 
   // Ensure inventory inputs are properly tracked
   $(document).on("input change", ".ctd-inventory-input", () => {
-    // Mark the form as changed
-    $("form#post").trigger("change")
-  })
-
-  // Make sure checkboxes trigger form changes
-  $(document).on("change", "input[type='checkbox']", () => {
     // Mark the form as changed
     $("form#post").trigger("change")
   })
