@@ -1,76 +1,206 @@
 <?php
 /**
  * Database Update Script for Custom T-Shirt Designer
- * 
- * This script adds missing columns to the database tables.
- * 
- * IMPORTANT: Place this file in your WordPress root directory and run it once.
- * Delete it immediately after running for security reasons.
+ * Adds size_type field to existing products and migrates data
  */
 
-// Load WordPress
-require_once('wp-load.php');
-
-// Security check - only allow admin users to run this script
-if (!current_user_can('manage_options')) {
-    die('Access denied. You must be an administrator to run this script.');
-}
-
-// Get the database prefix
-global $wpdb;
-$table_name = $wpdb->prefix . 'ctd_product_configs';
-
-// Check if table exists
-$table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") === $table_name;
-
-if (!$table_exists) {
-    echo "<p>Error: Table $table_name does not exist. Please activate the plugin first.</p>";
+// Prevent direct access
+if (!defined('ABSPATH')) {
     exit;
 }
 
-// Check and add color_sizes column
-$color_sizes_exists = $wpdb->get_var("SHOW COLUMNS FROM $table_name LIKE 'color_sizes'");
-if (!$color_sizes_exists) {
-    $wpdb->query("ALTER TABLE $table_name ADD COLUMN color_sizes longtext AFTER tier_pricing");
-    echo "<p>Added color_sizes column to $table_name</p>";
-} else {
-    echo "<p>color_sizes column already exists in $table_name</p>";
-}
-
-// Check and add inventory_enabled column
-$inventory_enabled_exists = $wpdb->get_var("SHOW COLUMNS FROM $table_name LIKE 'inventory_enabled'");
-if (!$inventory_enabled_exists) {
-    $wpdb->query("ALTER TABLE $table_name ADD COLUMN inventory_enabled tinyint(1) DEFAULT 0 AFTER color_sizes");
-    echo "<p>Added inventory_enabled column to $table_name</p>";
-} else {
-    echo "<p>inventory_enabled column already exists in $table_name</p>";
-}
-
-// Check and add inventory column
-$inventory_exists = $wpdb->get_var("SHOW COLUMNS FROM $table_name LIKE 'inventory'");
-if (!$inventory_exists) {
-    $wpdb->query("ALTER TABLE $table_name ADD COLUMN inventory longtext AFTER inventory_enabled");
-    echo "<p>Added inventory column to $table_name</p>";
-} else {
-    echo "<p>inventory column already exists in $table_name</p>";
-}
-
-// Check if updated_at column has ON UPDATE CURRENT_TIMESTAMP
-$updated_at_check = $wpdb->get_results("SHOW COLUMNS FROM $table_name LIKE 'updated_at'", ARRAY_A);
-if (!empty($updated_at_check)) {
-    $column_type = $updated_at_check[0]['Type'];
-    $column_default = $updated_at_check[0]['Default'];
-    $column_extra = isset($updated_at_check[0]['Extra']) ? $updated_at_check[0]['Extra'] : '';
+/**
+ * Update database to add size_type field to existing CTD products
+ */
+function ctd_update_database_add_size_type() {
+    global $wpdb;
     
-    // If it has ON UPDATE CURRENT_TIMESTAMP, modify it
-    if (strpos($column_extra, 'on update CURRENT_TIMESTAMP') !== false) {
-        $wpdb->query("ALTER TABLE $table_name MODIFY updated_at datetime DEFAULT CURRENT_TIMESTAMP");
-        echo "<p>Fixed updated_at column in $table_name</p>";
-    } else {
-        echo "<p>updated_at column is correctly configured in $table_name</p>";
+    $updated_count = 0;
+    $error_count = 0;
+    $log = array();
+    
+    try {
+        // Get all products that have CTD enabled but no size_type set
+        $products = get_posts(array(
+            'post_type' => 'product',
+            'posts_per_page' => -1,
+            'meta_query' => array(
+                'relation' => 'AND',
+                array(
+                    'key' => '_ctd_enabled',
+                    'value' => 'yes',
+                    'compare' => '='
+                ),
+                array(
+                    'key' => '_ctd_size_type',
+                    'compare' => 'NOT EXISTS'
+                )
+            )
+        ));
+        
+        $log[] = "Found " . count($products) . " CTD products without size_type field";
+        
+        foreach ($products as $product) {
+            try {
+                // Set default size type to 'mens' for existing products
+                $result = update_post_meta($product->ID, '_ctd_size_type', 'mens');
+                
+                if ($result !== false) {
+                    $updated_count++;
+                    $log[] = "Updated product ID {$product->ID} ({$product->post_title}) with mens size type";
+                    
+                    // Validate existing size data
+                    $existing_sizes = get_post_meta($product->ID, '_ctd_color_sizes', true);
+                    if (!empty($existing_sizes)) {
+                        $log[] = "Product ID {$product->ID} has existing size data - preserved";
+                    }
+                } else {
+                    $error_count++;
+                    $log[] = "Failed to update product ID {$product->ID}";
+                }
+                
+            } catch (Exception $e) {
+                $error_count++;
+                $log[] = "Error updating product ID {$product->ID}: " . $e->getMessage();
+            }
+        }
+        
+        // Update plugin version to indicate migration completed
+        update_option('ctd_size_type_migration_completed', current_time('mysql'));
+        
+        $log[] = "Migration completed successfully";
+        $log[] = "Updated: {$updated_count} products";
+        $log[] = "Errors: {$error_count} products";
+        
+    } catch (Exception $e) {
+        $log[] = "Critical error during migration: " . $e->getMessage();
+        $error_count++;
     }
+    
+    return array(
+        'success' => $error_count === 0,
+        'updated' => $updated_count,
+        'errors' => $error_count,
+        'log' => $log
+    );
 }
 
-echo "<h2>Database update completed successfully!</h2>";
-echo "<p>You can now delete this file for security reasons.</p>";
-?>
+/**
+ * Check if size type migration is needed
+ */
+function ctd_needs_size_type_migration() {
+    // Check if migration was already completed
+    $migration_completed = get_option('ctd_size_type_migration_completed', false);
+    if ($migration_completed) {
+        return false;
+    }
+    
+    // Check if there are any CTD products without size_type
+    $products = get_posts(array(
+        'post_type' => 'product',
+        'posts_per_page' => 1,
+        'meta_query' => array(
+            'relation' => 'AND',
+            array(
+                'key' => '_ctd_enabled',
+                'value' => 'yes',
+                'compare' => '='
+            ),
+            array(
+                'key' => '_ctd_size_type',
+                'compare' => 'NOT EXISTS'
+            )
+        )
+    ));
+    
+    return !empty($products);
+}
+
+/**
+ * Get migration status
+ */
+function ctd_get_migration_status() {
+    $migration_completed = get_option('ctd_size_type_migration_completed', false);
+    
+    // Count total CTD products
+    $total_ctd_products = get_posts(array(
+        'post_type' => 'product',
+        'posts_per_page' => -1,
+        'meta_query' => array(
+            array(
+                'key' => '_ctd_enabled',
+                'value' => 'yes',
+                'compare' => '='
+            )
+        ),
+        'fields' => 'ids'
+    ));
+    
+    // Count products with size_type
+    $migrated_products = get_posts(array(
+        'post_type' => 'product',
+        'posts_per_page' => -1,
+        'meta_query' => array(
+            'relation' => 'AND',
+            array(
+                'key' => '_ctd_enabled',
+                'value' => 'yes',
+                'compare' => '='
+            ),
+            array(
+                'key' => '_ctd_size_type',
+                'compare' => 'EXISTS'
+            )
+        ),
+        'fields' => 'ids'
+    ));
+    
+    return array(
+        'migration_completed' => $migration_completed,
+        'total_ctd_products' => count($total_ctd_products),
+        'migrated_products' => count($migrated_products),
+        'needs_migration' => ctd_needs_size_type_migration()
+    );
+}
+
+/**
+ * Run the migration if needed (called during plugin activation/update)
+ */
+function ctd_maybe_run_size_type_migration() {
+    if (ctd_needs_size_type_migration()) {
+        $result = ctd_update_database_add_size_type();
+        
+        // Log the result
+        if (function_exists('error_log')) {
+            error_log('CTD Size Type Migration Result: ' . print_r($result, true));
+        }
+        
+        return $result;
+    }
+    
+    return array(
+        'success' => true,
+        'message' => 'Migration not needed - already completed or no CTD products found'
+    );
+}
+
+// Hook to run migration on plugin activation/update
+add_action('init', function() {
+    // Only run once per request and only for admin users
+    if (is_admin() && current_user_can('manage_options')) {
+        static $migration_checked = false;
+        
+        if (!$migration_checked) {
+            $migration_checked = true;
+            
+            // Check if we need to run migration
+            if (ctd_needs_size_type_migration()) {
+                // Run migration in background
+                wp_schedule_single_event(time() + 10, 'ctd_run_size_type_migration');
+            }
+        }
+    }
+});
+
+// Hook for scheduled migration
+add_action('ctd_run_size_type_migration', 'ctd_maybe_run_size_type_migration');

@@ -1,305 +1,316 @@
 <?php
 /**
- * Installer class for Custom T-Shirt Designer
+ * Custom T-Shirt Designer Installer
+ * Handles database table creation and updates
  */
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 class CTD_Installer {
     
     /**
-     * Plugin activation
+     * Install/Update database tables
      */
-    public static function activate() {
-        // Force table creation and log any errors
-        $result = self::create_tables();
-        if ($result === false) {
-            error_log('CTD Error: Failed to create tables during activation');
-        } else {
-            error_log('CTD Success: Tables created during activation');
-        }
-        
-        self::create_upload_directory();
-        
-        // Set version
-        update_option('ctd_version', CTD_VERSION);
-        
-        // Set a flag to show a welcome message
-        update_option('ctd_show_welcome', 1);
-        
-        // Flush rewrite rules
-        flush_rewrite_rules();
-    }
-    
-    /**
-     * Plugin deactivation
-     */
-    public static function deactivate() {
-        // Flush rewrite rules
-        flush_rewrite_rules();
-    }
-    
-    /**
-     * Create required database tables
-     */
-    public static function create_tables() {
+    public static function install() {
         global $wpdb;
         
         $charset_collate = $wpdb->get_charset_collate();
         
-        // Table for product configurations
-        $table_name = $wpdb->prefix . 'ctd_product_configs';
-        
-        $sql = "CREATE TABLE IF NOT EXISTS $table_name (
-            id bigint(20) NOT NULL AUTO_INCREMENT,
+        // Create designs table
+        $designs_table = $wpdb->prefix . 'ctd_designs';
+        $designs_sql = "CREATE TABLE $designs_table (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
             product_id bigint(20) NOT NULL,
-            enabled tinyint(1) DEFAULT 0,
-            product_type varchar(50) DEFAULT 'shirt',
-            sizes longtext,
-            colors longtext,
-            decoration_methods longtext,
-            setup_fees longtext,
-            tier_pricing longtext,
-            color_sizes longtext,
-            inventory_enabled tinyint(1) DEFAULT 0,
-            inventory longtext,
+            user_id bigint(20) DEFAULT NULL,
+            session_id varchar(255) DEFAULT NULL,
+            design_data longtext NOT NULL,
             created_at datetime DEFAULT CURRENT_TIMESTAMP,
-            updated_at datetime DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY  (id),
-            KEY product_id (product_id)
+            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            KEY product_id (product_id),
+            KEY user_id (user_id),
+            KEY session_id (session_id)
         ) $charset_collate;";
         
-        // Table for design uploads
-        $table_name_designs = $wpdb->prefix . 'ctd_designs';
-        
-        $sql .= "CREATE TABLE IF NOT EXISTS $table_name_designs (
-            id bigint(20) NOT NULL AUTO_INCREMENT,
+        // Create orders table
+        $orders_table = $wpdb->prefix . 'ctd_orders';
+        $orders_sql = "CREATE TABLE $orders_table (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
             order_id bigint(20) NOT NULL,
-            order_item_id bigint(20) NOT NULL,
             product_id bigint(20) NOT NULL,
-            position varchar(20) NOT NULL,
-            file_path varchar(255) NOT NULL,
-            decoration_method varchar(50),
-            composite_image varchar(255),
+            design_id mediumint(9) DEFAULT NULL,
+            customization_data longtext DEFAULT NULL,
+            status varchar(50) DEFAULT 'pending',
             created_at datetime DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY  (id),
+            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
             KEY order_id (order_id),
-            KEY product_id (product_id)
+            KEY product_id (product_id),
+            KEY design_id (design_id),
+            KEY status (status)
         ) $charset_collate;";
         
-        // Table for order metadata
-        $table_name_orders = $wpdb->prefix . 'ctd_order_meta';
-        
-        $sql .= "CREATE TABLE IF NOT EXISTS $table_name_orders (
-            id bigint(20) NOT NULL AUTO_INCREMENT,
-            order_id bigint(20) NOT NULL,
-            order_item_id bigint(20) NOT NULL,
+        // Create inventory table
+        $inventory_table = $wpdb->prefix . 'ctd_inventory';
+        $inventory_sql = "CREATE TABLE $inventory_table (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
             product_id bigint(20) NOT NULL,
-            colors longtext,
-            sizes longtext,
-            setup_fees decimal(10,2) DEFAULT 0,
-            total_quantity int DEFAULT 0,
-            discount_applied decimal(10,2) DEFAULT 0,
+            color_key varchar(100) NOT NULL,
+            size varchar(50) NOT NULL,
+            quantity int(11) DEFAULT 0,
+            reserved_quantity int(11) DEFAULT 0,
             created_at datetime DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY  (id),
-            KEY order_id (order_id),
-            KEY product_id (product_id)
+            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            UNIQUE KEY product_color_size (product_id, color_key, size),
+            KEY product_id (product_id),
+            KEY color_key (color_key),
+            KEY size (size)
         ) $charset_collate;";
         
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         
-        // Use try-catch to prevent fatal errors
-        try {
-            // Execute each query separately to better identify issues
-            $tables = array(
-                $wpdb->prefix . 'ctd_product_configs',
-                $wpdb->prefix . 'ctd_designs',
-                $wpdb->prefix . 'ctd_order_meta'
-            );
+        dbDelta($designs_sql);
+        dbDelta($orders_sql);
+        dbDelta($inventory_sql);
+        
+        // Run migration for existing products
+        self::migrate_existing_products();
+        
+        // Update version
+        update_option('ctd_db_version', CTD_VERSION);
+    }
+    
+    /**
+     * Migrate existing products to add size_type field
+     */
+    private static function migrate_existing_products() {
+        // Get all products that have CTD data but no size_type set
+        $products = get_posts(array(
+            'post_type' => 'product',
+            'posts_per_page' => -1,
+            'meta_query' => array(
+                'relation' => 'AND',
+                array(
+                    'key' => '_ctd_enabled',
+                    'value' => 'yes',
+                    'compare' => '='
+                ),
+                array(
+                    'key' => '_ctd_size_type',
+                    'compare' => 'NOT EXISTS'
+                )
+            )
+        ));
+        
+        foreach ($products as $product) {
+            // Default to men's sizes for existing products
+            update_post_meta($product->ID, '_ctd_size_type', 'mens');
             
-            // Split SQL into individual table creation statements
-            $sql_statements = explode(';', $sql);
-            $sql_statements = array_filter($sql_statements);
+            // Migrate existing size data if needed
+            self::migrate_product_sizes($product->ID);
+        }
+    }
+    
+    /**
+     * Migrate individual product sizes to new format
+     */
+    private static function migrate_product_sizes($product_id) {
+        $existing_colors = get_post_meta($product_id, '_ctd_color_keys', true);
+        $existing_sizes = get_post_meta($product_id, '_ctd_color_sizes', true);
+        $existing_inventory = get_post_meta($product_id, '_ctd_inventory', true);
+        
+        if (!empty($existing_colors) && !empty($existing_sizes)) {
+            // Check if we need to migrate size format
+            $needs_migration = false;
             
-            foreach ($sql_statements as $statement) {
-                if (!empty(trim($statement))) {
-                    $result = $wpdb->query($statement);
-                    if ($result === false) {
-                        error_log('CTD Table Creation Error: ' . $wpdb->last_error . ' for query: ' . $statement);
+            foreach ($existing_sizes as $color_key => $sizes) {
+                if (is_array($sizes)) {
+                    foreach ($sizes as $size) {
+                        // Check if size looks like old format that needs conversion
+                        if (self::needs_size_conversion($size)) {
+                            $needs_migration = true;
+                            break 2;
+                        }
                     }
                 }
             }
             
-            // Verify tables exist
-            $all_exist = true;
-            foreach ($tables as $table) {
-                if ($wpdb->get_var("SHOW TABLES LIKE '$table'") !== $table) {
-                    $all_exist = false;
-                    error_log("CTD Table does not exist after creation: $table");
-                }
-            }
-            
-            if (!$all_exist) {
-                // Try one more time with dbDelta
-                $result = dbDelta($sql);
-                error_log('CTD Table Creation Results (dbDelta): ' . print_r($result, true));
+            if ($needs_migration) {
+                // Perform size migration while preserving inventory data
+                $migrated_sizes = array();
+                $migrated_inventory = array();
                 
-                // Check again
-                $all_exist = true;
-                foreach ($tables as $table) {
-                    if ($wpdb->get_var("SHOW TABLES LIKE '$table'") !== $table) {
-                        $all_exist = false;
-                        error_log("CTD Table still does not exist after dbDelta: $table");
+                foreach ($existing_sizes as $color_key => $sizes) {
+                    if (is_array($sizes)) {
+                        $migrated_sizes[$color_key] = array();
+                        
+                        foreach ($sizes as $size) {
+                            $new_size = self::convert_size_format($size);
+                            $migrated_sizes[$color_key][] = $new_size;
+                            
+                            // Migrate inventory data
+                            if (isset($existing_inventory[$color_key][$size])) {
+                                $migrated_inventory[$color_key][$new_size] = $existing_inventory[$color_key][$size];
+                            }
+                        }
                     }
                 }
                 
-                return $all_exist;
-            }
-            
-            return true;
-        } catch (Exception $e) {
-            error_log('CTD Table Creation Exception: ' . $e->getMessage());
-            return false;
-        }
-    }
-    
-    /**
-     * Create upload directory for designs
-     */
-    public static function create_upload_directory() {
-        $upload_dir = wp_upload_dir();
-        
-        // Create directory for designs
-        $ctd_dir = $upload_dir['basedir'] . '/ctd-designs';
-        if (!file_exists($ctd_dir)) {
-            wp_mkdir_p($ctd_dir);
-            
-            // Create .htaccess file to protect direct access
-            $htaccess_file = $ctd_dir . '/.htaccess';
-            if (!file_exists($htaccess_file)) {
-                $htaccess_content = "# Deny direct access to files\n";
-                $htaccess_content .= "<FilesMatch \"\\.(php|js|css|jpg|jpeg|png|gif)$\">\n";
-                $htaccess_content .= "Order Allow,Deny\n";
-                $htaccess_content .= "Deny from all\n";
-                $htaccess_content .= "</FilesMatch>\n";
+                // Update with migrated data
+                update_post_meta($product_id, '_ctd_color_sizes', $migrated_sizes);
+                update_post_meta($product_id, '_ctd_inventory', $migrated_inventory);
                 
-                file_put_contents($htaccess_file, $htaccess_content);
-            }
-            
-            // Create index.php file
-            $index_file = $ctd_dir . '/index.php';
-            if (!file_exists($index_file)) {
-                file_put_contents($index_file, "<?php\n// Silence is golden.");
-            }
-        }
-        
-        // Create directory for composite images
-        $composite_dir = $upload_dir['basedir'] . '/ctd-composites';
-        if (!file_exists($composite_dir)) {
-            wp_mkdir_p($composite_dir);
-            
-            // Create .htaccess file to protect direct access
-            $htaccess_file = $composite_dir . '/.htaccess';
-            if (!file_exists($htaccess_file)) {
-                $htaccess_content = "# Deny direct access to files\n";
-                $htaccess_content .= "<FilesMatch \"\\.(php|js|css)$\">\n";
-                $htaccess_content .= "Order Allow,Deny\n";
-                $htaccess_content .= "Deny from all\n";
-                $htaccess_content .= "</FilesMatch>\n";
-                
-                file_put_contents($htaccess_file, $htaccess_content);
-            }
-            
-            // Create index.php file
-            $index_file = $composite_dir . '/index.php';
-            if (!file_exists($index_file)) {
-                file_put_contents($index_file, "<?php\n// Silence is golden.");
+                // Log migration
+                error_log("CTD: Migrated sizes for product ID: $product_id");
             }
         }
     }
     
     /**
-     * Check and update table structure if needed
+     * Check if a size needs conversion
      */
-    public static function check_and_update_tables() {
+    private static function needs_size_conversion($size) {
+        // Add logic here if you have specific old formats that need conversion
+        // For now, we'll assume all existing sizes are compatible
+        return false;
+    }
+    
+    /**
+     * Convert size from old format to new format
+     */
+    private static function convert_size_format($size) {
+        // Add conversion logic here if needed
+        // For now, return as-is since we're not changing the size format
+        return $size;
+    }
+    
+    /**
+     * Check database status
+     */
+    public static function check_database_status() {
         global $wpdb;
         
-        $table_name = $wpdb->prefix . 'ctd_product_configs';
+        $status = array();
         
-        // Check if table exists
-        $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") === $table_name;
-        if (!$table_exists) {
-            return self::create_tables();
-        }
+        // Check tables
+        $tables = array(
+            'designs' => $wpdb->prefix . 'ctd_designs',
+            'orders' => $wpdb->prefix . 'ctd_orders',
+            'inventory' => $wpdb->prefix . 'ctd_inventory'
+        );
         
-        // Check if color_sizes column exists
-        $color_sizes_exists = $wpdb->get_var("SHOW COLUMNS FROM $table_name LIKE 'color_sizes'");
-        if (!$color_sizes_exists) {
-            $wpdb->query("ALTER TABLE $table_name ADD COLUMN color_sizes longtext AFTER tier_pricing");
-            error_log('CTD Added color_sizes column to ' . $table_name);
-        }
-        
-        // Check if inventory_enabled column exists
-        $inventory_enabled_exists = $wpdb->get_var("SHOW COLUMNS FROM $table_name LIKE 'inventory_enabled'");
-        if (!$inventory_enabled_exists) {
-            $wpdb->query("ALTER TABLE $table_name ADD COLUMN inventory_enabled tinyint(1) DEFAULT 0 AFTER color_sizes");
-            error_log('CTD Added inventory_enabled column to ' . $table_name);
-        }
-        
-        // Check if inventory column exists
-        $inventory_exists = $wpdb->get_var("SHOW COLUMNS FROM $table_name LIKE 'inventory'");
-        if (!$inventory_exists) {
-            $wpdb->query("ALTER TABLE $table_name ADD COLUMN inventory longtext AFTER inventory_enabled");
-            error_log('CTD Added inventory column to ' . $table_name);
-        }
-        
-        // Check if updated_at column has ON UPDATE CURRENT_TIMESTAMP
-        $updated_at_check = $wpdb->get_results("SHOW COLUMNS FROM $table_name LIKE 'updated_at'", ARRAY_A);
-        if (!empty($updated_at_check)) {
-            $column_type = $updated_at_check[0]['Type'];
-            $column_default = $updated_at_check[0]['Default'];
-            $column_extra = isset($updated_at_check[0]['Extra']) ? $updated_at_check[0]['Extra'] : '';
-            
-            // If it has ON UPDATE CURRENT_TIMESTAMP, modify it
-            if (strpos($column_extra, 'on update CURRENT_TIMESTAMP') !== false) {
-                $wpdb->query("ALTER TABLE $table_name MODIFY updated_at datetime DEFAULT CURRENT_TIMESTAMP");
-                error_log('CTD Fixed updated_at column in ' . $table_name);
-            }
-        }
-
-        return true;
-    }
-    
-    /**
-     * Regenerate tables - can be called from admin
-     */
-    public static function regenerate_tables() {
-        global $wpdb;
-        
-        try {
-            // Instead of dropping tables first, just create them if they don't exist
-            // This is safer than dropping tables which could cause data loss
-            self::create_tables();
-        
-            // Check and update table structure if needed
-            self::check_and_update_tables();
-        
-            // Verify tables exist
-            $tables = array(
-                $wpdb->prefix . 'ctd_product_configs',
-                $wpdb->prefix . 'ctd_designs',
-                $wpdb->prefix . 'ctd_order_meta'
+        foreach ($tables as $name => $table) {
+            $exists = $wpdb->get_var("SHOW TABLES LIKE '$table'") === $table;
+            $status['tables'][$name] = array(
+                'exists' => $exists,
+                'name' => $table
             );
             
-            $all_exist = true;
-            foreach ($tables as $table) {
-                if ($wpdb->get_var("SHOW TABLES LIKE '$table'") !== $table) {
-                    $all_exist = false;
-                    error_log("CTD Table does not exist after regeneration: $table");
-                }
+            if ($exists) {
+                // Check table structure
+                $columns = $wpdb->get_results("DESCRIBE $table");
+                $status['tables'][$name]['columns'] = $columns;
             }
-            
-            return $all_exist;
-        } catch (Exception $e) {
-            error_log('CTD Table Regeneration Error: ' . $e->getMessage());
-            return false;
         }
+        
+        // Check version
+        $db_version = get_option('ctd_db_version', '0.0.0');
+        $status['version'] = array(
+            'current' => CTD_VERSION,
+            'database' => $db_version,
+            'needs_update' => version_compare($db_version, CTD_VERSION, '<')
+        );
+        
+        return $status;
+    }
+    
+    /**
+     * Repair/Update database
+     */
+    public static function repair_database() {
+        try {
+            self::install();
+            return array(
+                'success' => true,
+                'message' => 'Database successfully updated/repaired.'
+            );
+        } catch (Exception $e) {
+            return array(
+                'success' => false,
+                'message' => 'Database repair failed: ' . $e->getMessage()
+            );
+        }
+    }
+    
+    /**
+     * Get database statistics
+     */
+    public static function get_database_stats() {
+        global $wpdb;
+        
+        $stats = array();
+        
+        // Count designs
+        $designs_table = $wpdb->prefix . 'ctd_designs';
+        $stats['designs'] = $wpdb->get_var("SELECT COUNT(*) FROM $designs_table");
+        
+        // Count orders
+        $orders_table = $wpdb->prefix . 'ctd_orders';
+        $stats['orders'] = $wpdb->get_var("SELECT COUNT(*) FROM $orders_table");
+        
+        // Count inventory items
+        $inventory_table = $wpdb->prefix . 'ctd_inventory';
+        $stats['inventory_items'] = $wpdb->get_var("SELECT COUNT(*) FROM $inventory_table");
+        
+        // Count CTD-enabled products
+        $stats['ctd_products'] = $wpdb->get_var("
+            SELECT COUNT(*) 
+            FROM {$wpdb->postmeta} 
+            WHERE meta_key = '_ctd_enabled' 
+            AND meta_value = 'yes'
+        ");
+        
+        return $stats;
+    }
+    
+    /**
+     * Clean up orphaned data
+     */
+    public static function cleanup_orphaned_data() {
+        global $wpdb;
+        
+        $cleaned = array();
+        
+        // Clean up designs for deleted products
+        $designs_table = $wpdb->prefix . 'ctd_designs';
+        $deleted_designs = $wpdb->query("
+            DELETE d FROM $designs_table d
+            LEFT JOIN {$wpdb->posts} p ON d.product_id = p.ID
+            WHERE p.ID IS NULL
+        ");
+        $cleaned['designs'] = $deleted_designs;
+        
+        // Clean up orders for deleted orders
+        $orders_table = $wpdb->prefix . 'ctd_orders';
+        $deleted_orders = $wpdb->query("
+            DELETE o FROM $orders_table o
+            LEFT JOIN {$wpdb->posts} p ON o.order_id = p.ID
+            WHERE p.ID IS NULL
+        ");
+        $cleaned['orders'] = $deleted_orders;
+        
+        // Clean up inventory for deleted products
+        $inventory_table = $wpdb->prefix . 'ctd_inventory';
+        $deleted_inventory = $wpdb->query("
+            DELETE i FROM $inventory_table i
+            LEFT JOIN {$wpdb->posts} p ON i.product_id = p.ID
+            WHERE p.ID IS NULL
+        ");
+        $cleaned['inventory'] = $deleted_inventory;
+        
+        return $cleaned;
     }
 }

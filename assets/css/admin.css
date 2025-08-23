@@ -458,31 +458,6 @@
   border-bottom: 1px solid #ddd;
 }
 
-/* Size type selector styles */
-.ctd-size-type-selector {
-  margin-bottom: 15px;
-  padding: 10px;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.ctd-size-type-selector label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 600;
-  color: #23282d;
-}
-
-.ctd-size-type-select {
-  width: 200px;
-  padding: 6px 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  background-color: #fff;
-}
-
 /* FIXED: Update the color size options grid for better alignment */
 .ctd-color-size-options {
   display: grid;
@@ -878,4 +853,22 @@
     box-shadow: none;
     border: 1px solid #000;
   }
+}
+
+/* Size type selector styles - Product-wide */
+.ctd-field-group select#ctd_product_size_type {
+  width: 200px;
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #fff;
+  margin-bottom: 10px;
+}
+
+.ctd-field-group label[for="ctd_product_size_type"] {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #23282d;
 }

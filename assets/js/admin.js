@@ -35,20 +35,6 @@ jQuery(document).ready(($) => {
     })
   }
 
-  // Create size type selector HTML
-  function createSizeTypeSelector(colorId) {
-    return `
-      <div class="ctd-size-type-selector">
-        <label>Size Type:</label>
-        <select class="ctd-size-type-select" data-color="${colorId}">
-          <option value="mens">Men's Sizes</option>
-          <option value="womens">Women's Sizes</option>
-          <option value="kids">Kids Sizes</option>
-        </select>
-      </div>
-    `
-  }
-
   // Create size options HTML
   function createSizeOptionsHtml(sizes, colorId) {
     let html = ""
@@ -68,17 +54,49 @@ jQuery(document).ready(($) => {
     return html
   }
 
+  // Get current size type from the product-wide selector
+  function getCurrentSizeType() {
+    const sizeTypeSelect = $("#ctd_product_size_type")
+    return sizeTypeSelect.length ? sizeTypeSelect.val() : 'mens'
+  }
+
+  // Update all color size options when size type changes
+  function updateAllColorSizes(sizeType) {
+    const sizes = sizeTypes[sizeType] || sizeTypes.mens
+    
+    $(".ctd-color-size-options").each(function() {
+      const container = $(this)
+      const colorId = container.data("color")
+      
+      // Clear existing size options
+      container.empty()
+      
+      // Add new size options with proper HTML structure
+      const newSizeOptionsHtml = createSizeOptionsHtml(sizes, colorId)
+      container.html(newSizeOptionsHtml)
+    })
+  }
+
+  // Handle product-wide size type change
+  $(document).on("change", "#ctd_product_size_type", function() {
+    const sizeType = $(this).val()
+    updateAllColorSizes(sizeType)
+    
+    // Mark form as changed
+    $("form#post").trigger("change")
+  })
+
   // Add color button functionality
   $("#ctd_add_color").on("click", () => {
     // Generate a unique temporary ID for the new color
     const tempId = "new_color_" + Math.floor(Math.random() * 10000)
 
-    // Use default men's sizes
-    const defaultSizes = sizeTypes.mens
+    // Get current size type and corresponding sizes
+    const currentSizeType = getCurrentSizeType()
+    const currentSizes = sizeTypes[currentSizeType] || sizeTypes.mens
 
-    // Create size type selector and options
-    const sizeTypeSelector = createSizeTypeSelector(tempId)
-    const sizeOptionsHtml = createSizeOptionsHtml(defaultSizes, tempId)
+    // Create size options HTML (no size type selector per color)
+    const sizeOptionsHtml = createSizeOptionsHtml(currentSizes, tempId)
 
     // Create the color row HTML
     const colorRowHtml = `
@@ -93,7 +111,6 @@ jQuery(document).ready(($) => {
         <!-- Size options for this color -->
         <div class="ctd-color-sizes">
           <h4>Sizes for this color</h4>
-          ${sizeTypeSelector}
           <div class="ctd-color-size-options" data-color="${tempId}">
             ${sizeOptionsHtml}
           </div>
@@ -138,32 +155,11 @@ jQuery(document).ready(($) => {
         })
 
         newRow.find(".ctd-add-custom-size").attr("data-color", newColorKey)
-        newRow.find(".ctd-size-type-select").attr("data-color", newColorKey)
         newRow.find(".ctd-color-size-options").attr("data-color", newColorKey)
       }
     })
 
     // Ensure the form is marked as changed
-    $("form#post").trigger("change")
-  })
-
-  // Handle size type change
-  $(document).on("change", ".ctd-size-type-select", function() {
-    const sizeType = $(this).val()
-    const colorId = $(this).data("color")
-    const container = $(this).closest(".ctd-color-sizes").find(".ctd-color-size-options")
-    
-    // Get the sizes for the selected type
-    const sizes = sizeTypes[sizeType] || sizeTypes.mens
-    
-    // Clear existing size options
-    container.empty()
-    
-    // Add new size options with proper HTML structure
-    const newSizeOptionsHtml = createSizeOptionsHtml(sizes, colorId)
-    container.html(newSizeOptionsHtml)
-    
-    // Mark form as changed
     $("form#post").trigger("change")
   })
 
