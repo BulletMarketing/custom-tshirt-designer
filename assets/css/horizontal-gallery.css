@@ -1,0 +1,91 @@
+/**
+ * Custom T-Shirt Designer - Horizontal Gallery Styles
+ */
+
+/* Make the thumbnails container horizontal with scrolling */
+.woocommerce-product-gallery .flex-control-nav {
+  display: flex !important;
+  flex-direction: row !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  white-space: nowrap !important;
+  margin-top: 10px !important;
+  padding-bottom: 5px !important; /* Add padding for scrollbar */
+  max-width: 100% !important;
+  scrollbar-width: thin; /* Firefox */
+}
+
+/* Style the scrollbar for webkit browsers */
+.woocommerce-product-gallery .flex-control-nav::-webkit-scrollbar {
+  height: 6px !important;
+}
+
+.woocommerce-product-gallery .flex-control-nav::-webkit-scrollbar-track {
+  background: #f1f1f1 !important;
+  border-radius: 3px !important;
+}
+
+.woocommerce-product-gallery .flex-control-nav::-webkit-scrollbar-thumb {
+  background: #888 !important;
+  border-radius: 3px !important;
+}
+
+.woocommerce-product-gallery .flex-control-nav::-webkit-scrollbar-thumb:hover {
+  background: #555 !important;
+}
+
+/* Style the thumbnails */
+.woocommerce-product-gallery .flex-control-nav li {
+  float: none !important;
+  display: inline-block !important;
+  width: auto !important;
+  margin: 0 5px 0 0 !important;
+  padding: 0 !important;
+  vertical-align: middle !important;
+}
+
+/* Make sure the first thumbnail has no left margin */
+.woocommerce-product-gallery .flex-control-nav li:first-child {
+  margin-left: 0 !important;
+}
+
+/* Make sure the last thumbnail has no right margin */
+.woocommerce-product-gallery .flex-control-nav li:last-child {
+  margin-right: 0 !important;
+}
+
+/* Style the thumbnail images */
+.woocommerce-product-gallery .flex-control-nav img {
+  width: 70px !important;
+  height: auto !important;
+  cursor: pointer !important;
+  border: 1px solid #ddd !important;
+  padding: 2px !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  transition: border-color 0.2s ease !important;
+}
+
+/* Style the active thumbnail */
+.woocommerce-product-gallery .flex-control-nav img.flex-active,
+.woocommerce-product-gallery .flex-control-nav img:hover {
+  border-color: #333 !important;
+}
+
+/* Ensure the main image has proper spacing */
+.woocommerce-product-gallery .flex-viewport {
+  margin-bottom: 10px !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .woocommerce-product-gallery .flex-control-nav img {
+    width: 60px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .woocommerce-product-gallery .flex-control-nav img {
+    width: 50px !important;
+  }
+}

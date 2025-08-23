@@ -1,0 +1,851 @@
+/**
+ * Custom T-Shirt Designer Frontend Styles
+ */
+
+/* Add styles for the select color message */
+.ctd-select-color-message {
+  padding: 15px;
+  background-color: #f8f8f8;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  text-align: center;
+  color: #666;
+}
+
+/* Designer Container */
+.ctd-designer {
+  margin: 30px 0;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  clear: both;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ctd-designer h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.5em;
+  color: #333;
+}
+
+/* Steps */
+.ctd-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.ctd-step {
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+}
+
+.ctd-step h4 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.2em;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+/* Color Selection */
+.ctd-color-toggle {
+  margin-bottom: 15px;
+}
+
+.ctd-color-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+/* Add or update the color swatch styles to ensure proper display */
+.ctd-color-swatch {
+  display: inline-block;
+  margin: 5px;
+  text-align: center;
+}
+
+.ctd-swatch {
+  display: block;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid #ddd;
+  margin: 0 auto 5px;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.ctd-color-input {
+  position: absolute;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.ctd-color-input:checked + .ctd-swatch {
+  border: 2px solid #000;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #000;
+}
+
+.ctd-color-name {
+  font-size: 12px;
+  display: block;
+  margin-top: 3px;
+}
+
+/* Size Selection */
+.ctd-size-tables-container {
+  overflow-x: auto;
+  margin-bottom: 15px;
+}
+
+.ctd-size-table-wrapper {
+  margin-bottom: 20px;
+}
+
+.ctd-size-table-wrapper h5 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 1em;
+}
+
+/* Style quantity inputs */
+.ctd-quantity-input {
+  width: 50px !important;
+  text-align: center !important;
+  padding: 5px !important;
+  border: 1px solid #ddd !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+  -moz-appearance: textfield !important;
+}
+
+/* Remove browser default styling for number inputs */
+.ctd-quantity-input::-webkit-outer-spin-button,
+.ctd-quantity-input::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0 !important;
+}
+
+/* Add focus style */
+.ctd-quantity-input:focus {
+  border-color: #7f54b3 !important;
+  outline: none !important;
+}
+
+/* Style for the size table */
+.ctd-size-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.ctd-size-table th,
+.ctd-size-table td {
+  padding: 8px;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+.ctd-size-table th {
+  background-color: #f8f8f8;
+  font-weight: 600;
+}
+
+.ctd-quantity-input {
+  width: 60px; /* Increased width to accommodate spinner buttons */
+  text-align: center;
+  padding: 5px 20px 5px 5px; /* Added right padding to prevent text overlap with spinner */
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  -moz-appearance: textfield; /* Firefox */
+}
+
+/* Hide spinner for webkit browsers */
+.ctd-quantity-input::-webkit-outer-spin-button,
+.ctd-quantity-input::-webkit-inner-spin-button {
+  opacity: 1;
+  margin-left: 5px; /* Add margin to separate spinner from text */
+}
+
+/* Ensure text doesn't get covered in Firefox */ \
+@-moz-document url-prefix() {
+  .ctd-quantity-input {
+    padding-right: 5px;
+    width: 65px;
+  }
+}
+
+.ctd-total-quantity {
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.ctd-min-quantity-notice {
+  color: #777;
+  font-size: 0.9em;
+  margin-top: 5px;
+}
+
+/* Inventory indicators */
+.ctd-out-of-stock {
+  display: block;
+  color: #e53935;
+  font-size: 0.8em;
+  margin-top: 5px;
+}
+
+.ctd-low-stock {
+  display: block;
+  color: #f57c00;
+  font-size: 0.8em;
+  margin-top: 5px;
+}
+
+/* Disabled quantity input */
+.ctd-quantity-input:disabled {
+  background-color: #f5f5f5;
+  color: #999;
+  cursor: not-allowed;
+}
+
+/* Decoration Method Container */
+.ctd-decoration-method-container {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.ctd-decoration-method-container label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.ctd-decoration-select {
+  width: 100%;
+  max-width: 300px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  margin-bottom: 10px;
+}
+
+.ctd-decoration-method-info {
+  margin-top: 5px;
+  font-size: 0.9em;
+  color: #777;
+}
+
+.ctd-decoration-help {
+  margin-top: 10px;
+  font-size: 0.9em;
+}
+
+/* Upload Squares Container */
+.ctd-upload-squares {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* Upload Square */
+.ctd-upload-square {
+  flex: 1;
+  min-width: 150px;
+  position: relative;
+  cursor: pointer;
+  border: 2px dashed #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 15px;
+  min-height: 120px;
+  transition: all 0.3s ease;
+}
+
+.ctd-upload-square:hover {
+  border-color: #999;
+  background-color: #f9f9f9;
+}
+
+.ctd-upload-square.active {
+  border-color: #4caf50;
+  background-color: rgba(76, 175, 80, 0.1);
+}
+
+.ctd-upload-square.loading {
+  border-color: #2196f3;
+  background-color: rgba(33, 150, 243, 0.1);
+}
+
+.ctd-upload-square input[type="file"] {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.ctd-upload-square-icon {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #666;
+}
+
+.ctd-upload-square-text {
+  color: #666;
+  font-size: 14px;
+}
+
+/* Fix upload square styles to ensure they reset properly */
+.ctd-upload-square-preview {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: none;
+}
+
+.ctd-upload-square-preview img {
+  max-width: 100%;
+  max-height: 120px;
+  display: block;
+  margin: 0 auto;
+}
+
+.ctd-upload-square-remove {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 24px;
+  height: 24px;
+  background: #ff5252;
+  color: white;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 22px;
+  font-size: 16px;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.ctd-upload-square-remove:hover {
+  background: #ff0000;
+}
+
+/* Design Preview Section */
+.ctd-design-preview-section {
+  margin-top: 30px;
+}
+
+.ctd-design-preview-section h5 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.1em;
+  color: #333;
+}
+
+.ctd-design-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.ctd-preview-image-container {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  height: 400px;
+  margin: 0 auto;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+  background-color: #fff;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.ctd-design-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.ctd-design-overlay img {
+  position: absolute;
+  cursor: move;
+  max-width: 80%;
+  max-height: 80%;
+  pointer-events: auto;
+}
+
+/* Position Tabs */
+.ctd-position-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.ctd-position-tab {
+  padding: 10px 15px;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ctd-position-tab.active {
+  background-color: #333;
+  color: #fff;
+  border-color: #333;
+}
+
+/* Design Controls */
+.ctd-design-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 15px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.ctd-control-group {
+  display: flex;
+  gap: 5px;
+}
+
+.ctd-control-btn {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #ddd;
+  background-color: #f5f5f5;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.ctd-control-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.ctd-control-btn:active {
+  background-color: #d0d0d0;
+}
+
+.ctd-icon {
+  font-size: 18px;
+  color: #333;
+}
+
+.ctd-position-info {
+  margin-top: 10px;
+  font-size: 0.9em;
+  color: #777;
+  text-align: center;
+}
+
+/* Modal */
+.ctd-modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.ctd-modal-content {
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: 80%;
+  max-width: 600px;
+}
+
+.ctd-modal-close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.ctd-modal-close:hover {
+  color: #333;
+}
+
+.ctd-decoration-methods-info {
+  margin-top: 20px;
+}
+
+.ctd-decoration-method-info {
+  margin-bottom: 15px;
+}
+
+.ctd-decoration-method-info h4 {
+  margin-top: 0;
+  margin-bottom: 5px;
+  font-size: 1.1em;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+/* Validation Messages */
+.ctd-validation-messages {
+  margin: 15px 0;
+}
+
+.ctd-validation-message {
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+
+.ctd-validation-error {
+  background-color: #ffebee;
+  color: #c62828;
+  border-left: 4px solid #c62828;
+}
+
+.ctd-validation-warning {
+  background-color: #fff8e1;
+  color: #ff8f00;
+  border-left: 4px solid #ff8f00;
+}
+
+.ctd-validation-success {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border-left: 4px solid #2e7d32;
+}
+
+/* Loading indicator */
+.ctd-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100px;
+  color: #2196f3;
+}
+
+/* WooCommerce Product Image Overlay */
+.woocommerce-product-gallery__image {
+  position: relative;
+}
+
+/* Related Products */
+.ctd-related-products ul.products {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: flex-start;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.ctd-related-products ul.products li.product {
+  flex: 0 0 calc(33.333% - 14px);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.ctd-related-products ul.products li.product img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto 10px;
+}
+
+.ctd-related-products ul.products li.product h2 {
+  font-size: 1em;
+  margin: 5px 0;
+}
+
+.ctd-related-products ul.products li.product .price {
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* WooCommerce Product Image Overlay */
+.woocommerce-product-gallery {
+  position: relative;
+}
+
+.woocommerce-product-gallery__wrapper {
+  position: relative;
+}
+
+.ctd-woo-design-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: all;
+  z-index: 10;
+}
+
+/* Improve the design overlay and controls */
+.ctd-woo-design-overlay img {
+  position: absolute;
+  max-width: 80%;
+  max-height: 80%;
+  pointer-events: all;
+  cursor: move;
+  transform-origin: center center;
+}
+
+/* Floating Controls */
+.ctd-floating-controls {
+  display: none;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(255, 255, 255, 0.95);
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.ctd-floating-controls.active {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ctd-control-group {
+  display: flex;
+  gap: 5px;
+}
+
+.ctd-control-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #ddd;
+  background-color: #f5f5f5;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.ctd-control-btn:hover {
+  background-color: #e0e0e0;
+  border-color: #ccc;
+}
+
+.ctd-control-btn:active {
+  background-color: #d0d0d0;
+  border-color: #bbb;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .ctd-color-swatches {
+    justify-content: center;
+  }
+
+  .ctd-upload-squares {
+    flex-direction: column;
+  }
+
+  .ctd-upload-square {
+    height: 120px;
+    margin-bottom: 10px;
+  }
+
+  .ctd-modal-content {
+    margin: 20% auto;
+    width: 90%;
+  }
+
+  .ctd-design-controls {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+/* Responsive for related products */
+@media (max-width: 768px) {
+  .ctd-related-products ul.products li.product {
+    flex: 0 0 calc(50% - 10px);
+  }
+}
+
+@media (max-width: 480px) {
+  .ctd-related-products ul.products li.product {
+    flex: 0 0 100%;
+  }
+}
+
+/* Fix for WooCommerce product page layout */
+.woocommerce div.product form.cart {
+  clear: both;
+}
+
+/* Ensure our plugin doesn't break WooCommerce layout */
+.woocommerce-product-gallery {
+  overflow: visible !important;
+}
+
+.woocommerce div.product div.images {
+  overflow: visible !important;
+}
+
+/* Fix for color swatches */
+.ctd-color-swatch label {
+  display: inline-block;
+  position: relative;
+}
+
+/* Fix for WooCommerce product gallery */
+.woocommerce-product-gallery__wrapper .woocommerce-product-gallery__image {
+  overflow: visible !important;
+}
+
+/* Fix for WooCommerce product gallery image */
+.woocommerce-product-gallery__image img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Fix for WooCommerce product gallery image overlay */
+.ctd-woo-design-overlay {
+  z-index: 10;
+}
+
+/* Fix for WooCommerce product gallery image overlay image */
+.ctd-woo-design-overlay img {
+  z-index: 11;
+}
+
+/* Fix for WooCommerce product gallery image overlay controls */
+.ctd-floating-controls {
+  z-index: 12;
+}
+
+/* Fix for WooCommerce product gallery image overlay controls buttons */
+.ctd-control-btn {
+  z-index: 13;
+}
+
+/* Fix for WooCommerce product gallery image overlay controls buttons icons */
+.ctd-icon {
+  z-index: 14;
+}
+
+/* Fix for WooCommerce product gallery image overlay controls buttons hover */
+.ctd-control-btn:hover {
+  z-index: 15;
+}
+
+/* Fix for WooCommerce product gallery image overlay controls buttons active */
+.ctd-control-btn:active {
+  z-index: 16;
+}
+
+/* Fix for WooCommerce product gallery image overlay controls buttons focus */
+.ctd-control-btn:focus {
+  z-index: 17;
+}
+
+/* Fix for WooCommerce product gallery image overlay controls buttons focus visible */
+.ctd-control-btn:focus-visible {
+  z-index: 18;
+}
+
+/* Fix for WooCommerce product gallery image overlay controls buttons focus within */
+.ctd-control-btn:focus-within {
+  z-index: 19;
+}
+
+/* Fix for WooCommerce product gallery image overlay controls buttons target */
+.ctd-control-btn:target {
+  z-index: 20;
+}
+
+/* Fix for WooCommerce product gallery image overlay controls buttons hover focus */
+.ctd-control-btn:hover:focus {
+  z-index: 21;
+}
+
+/* Fix for WooCommerce product gallery image overlay controls buttons hover active */
+.ctd-control-btn:hover:active {
+  z-index: 22;
+}
+
+/* Fix for WooCommerce product gallery image overlay controls buttons focus active */
+.ctd-control-btn:focus:active {
+  z-index: 23;
+}
+
+/* Fix for WooCommerce product gallery image overlay controls buttons hover focus active */
+.ctd-control-btn:hover:focus:active {
+  z-index: 24;
+}
+
+/* Fix for WooCommerce product gallery image overlay controls buttons hover focus active target */
+.ctd-control-btn:hover:focus:active:target {
+  z-index: 25;
+}
+
+/* Fix for WooCommerce product gallery image overlay controls buttons hover focus active target focus-visible */
+.ctd-control-btn:hover:focus:active:target:focus-visible {
+  z-index: 26;
+}
+
+/* Fix for WooCommerce product gallery image overlay controls buttons hover focus active target focus-visible focus-within */
+.ctd-control-btn:hover:focus:active:target:focus-visible:focus-within {
+  z-index: 27;
+}
+
+/* Fix for WooCommerce product gallery image overlay controls buttons hover focus active target focus-visible focus-within hover */
+.ctd-control-btn:hover:focus:active:target:focus-visible:focus-within:hover {
+  z-index: 28;
+}
+
+/* Fix for WooCommerce product gallery image overlay controls buttons hover focus active target focus-visible focus-within hover focus */
+.ctd-control-btn:hover:focus:active:target:focus-visible:focus-within:hover:focus {
+  z-index: 29;
+}
+
+/* Fix for WooCommerce product gallery image overlay controls buttons hover focus active target focus-visible focus-within hover focus active */
+.ctd-control-btn:hover:focus:active:target:focus-visible:focus-within:hover:focus:active {
+  z-index: 30;
+}

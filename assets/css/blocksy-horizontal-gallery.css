@@ -1,0 +1,240 @@
+/**
+ * Custom T-Shirt Designer - Blocksy Theme Horizontal Gallery Styles
+ */
+
+/* Target Blocksy's specific gallery classes */
+.ct-product-view .flexy-pills {
+  display: flex !important;
+  flex-direction: row !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  white-space: nowrap !important;
+  margin-top: 10px !important;
+  padding-bottom: 5px !important;
+  max-width: 100% !important;
+  max-height: 100px !important; /* Increased to 100px */
+  height: 100px !important; /* Increased to 100px */
+  scrollbar-width: thin; /* Firefox */
+  position: relative !important;
+  bottom: 0 !important;
+}
+
+/* Style the scrollbar for webkit browsers */
+.ct-product-view .flexy-pills::-webkit-scrollbar {
+  height: 6px !important;
+}
+
+.ct-product-view .flexy-pills::-webkit-scrollbar-track {
+  background: #f1f1f1 !important;
+  border-radius: 3px !important;
+}
+
+.ct-product-view .flexy-pills::-webkit-scrollbar-thumb {
+  background: #888 !important;
+  border-radius: 3px !important;
+}
+
+.ct-product-view .flexy-pills::-webkit-scrollbar-thumb:hover {
+  background: #555 !important;
+}
+
+/* Style the thumbnails */
+.ct-product-view .flexy-pills ol {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  width: auto !important;
+  max-width: none !important;
+  height: 100px !important; /* Increased to 100px */
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.ct-product-view .flexy-pills ol li {
+  float: none !important;
+  display: inline-block !important;
+  width: 100px !important; /* Fixed width to 100px */
+  height: 100px !important; /* Increased to 100px */
+  margin: 0 5px 0 0 !important;
+  padding: 0 !important;
+  vertical-align: middle !important;
+  flex: 0 0 auto !important;
+}
+
+/* Make sure the first thumbnail has no left margin */
+.ct-product-view .flexy-pills ol li:first-child {
+  margin-left: 0 !important;
+}
+
+/* Make sure the last thumbnail has no right margin */
+.ct-product-view .flexy-pills ol li:last-child {
+  margin-right: 0 !important;
+}
+
+/* Style the thumbnail images */
+.ct-product-view .flexy-pills ol li button {
+  width: 100px !important; /* Fixed width to 100px */
+  height: 100px !important; /* Increased to 100px */
+  max-height: 100px !important;
+  max-width: 100px !important;
+  cursor: pointer !important;
+  border: 1px solid #ddd !important;
+  padding: 2px !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  transition: border-color 0.2s ease !important;
+  object-fit: cover !important;
+}
+
+/* Force the images inside buttons to be properly sized */
+.ct-product-view .flexy-pills ol li button img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+}
+
+/* Style the active thumbnail */
+.ct-product-view .flexy-pills ol li.active button,
+.ct-product-view .flexy-pills ol li button:hover {
+  border-color: #333 !important;
+}
+
+/* Ensure the main image has proper spacing */
+.ct-product-view .flexy-container {
+  margin-bottom: 10px !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .ct-product-view .flexy-pills ol li,
+  .ct-product-view .flexy-pills ol li button {
+    width: 100px !important;
+    height: 100px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .ct-product-view .flexy-pills ol li,
+  .ct-product-view .flexy-pills ol li button {
+    width: 100px !important;
+    height: 100px !important;
+  }
+}
+
+/* Fix the layout to prevent thumbnails from going down the page */
+.ct-product-view {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.ct-product-view .flexy-container {
+  order: 1 !important;
+}
+
+.ct-product-view .flexy-pills {
+  order: 2 !important;
+  margin-top: 10px !important;
+  margin-bottom: 0 !important;
+}
+
+/* Alternative selectors for different Blocksy versions */
+.product-entry-wrapper .flexy-pills {
+  display: flex !important;
+  flex-direction: row !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  white-space: nowrap !important;
+  margin-top: 10px !important;
+  padding-bottom: 5px !important;
+  max-width: 100% !important;
+  max-height: 100px !important; /* Increased to 100px */
+  height: 100px !important; /* Increased to 100px */
+}
+
+.product-entry-wrapper .flexy-pills ol {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  width: auto !important;
+  max-width: none !important;
+  height: 100px !important; /* Increased to 100px */
+}
+
+.product-entry-wrapper .flexy-pills ol li {
+  float: none !important;
+  display: inline-block !important;
+  width: 100px !important; /* Fixed width to 100px */
+  height: 100px !important; /* Increased to 100px */
+  margin: 0 5px 0 0 !important;
+  padding: 0 !important;
+  vertical-align: middle !important;
+  flex: 0 0 auto !important;
+}
+
+.product-entry-wrapper .flexy-pills ol li button {
+  width: 100px !important; /* Fixed width to 100px */
+  height: 100px !important; /* Increased to 100px */
+  max-height: 100px !important;
+  max-width: 100px !important;
+}
+
+/* Force the images inside buttons to be properly sized for alternative selectors */
+.product-entry-wrapper .flexy-pills ol li button img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+}
+
+/* Additional fixes for Blocksy's gallery structure */
+.ct-product-view .flexy,
+.product-entry-wrapper .flexy {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.ct-product-view .flexy .flexy-view,
+.product-entry-wrapper .flexy .flexy-view {
+  order: 1 !important;
+}
+
+.ct-product-view .flexy .flexy-pills,
+.product-entry-wrapper .flexy .flexy-pills {
+  order: 2 !important;
+  position: relative !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+}
+
+/* Force the thumbnails to stay at the bottom */
+.ct-product-view .flexy-pills,
+.product-entry-wrapper .flexy-pills {
+  position: relative !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+}
+
+/* Fix for any absolute positioning that might be causing issues */
+.ct-product-view .flexy-pills ol,
+.product-entry-wrapper .flexy-pills ol {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: row !important;
+  width: 100% !important;
+}
+
+/* Additional rules to force image resizing */
+.ct-product-view .flexy-pills ol li button img,
+.product-entry-wrapper .flexy-pills ol li button img,
+.ct-product-view .flexy-pills ol li img,
+.product-entry-wrapper .flexy-pills ol li img {
+  width: 94px !important; /* 100px - 2px padding - 2px border on each side */
+  height: 94px !important;
+  object-fit: cover !important;
+  display: block !important;
+}

@@ -1,0 +1,837 @@
+/**
+ * Custom T-Shirt Designer Admin Styles
+ */
+
+/* Admin styles for Custom T-Shirt Designer */
+.ctd-admin-container {
+  max-width: 1200px;
+  margin: 20px 0;
+  background: #fff;
+  border: 1px solid #ccd0d4;
+  border-radius: 4px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+}
+
+.ctd-admin-header {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+  background: #f9f9f9;
+}
+
+.ctd-admin-header h2 {
+  margin: 0;
+  font-size: 18px;
+  color: #23282d;
+}
+
+.ctd-admin-content {
+  padding: 20px;
+}
+
+.ctd-section {
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.ctd-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.ctd-section-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #23282d;
+}
+
+.ctd-field-group {
+  margin-bottom: 20px;
+}
+
+.ctd-field-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #23282d;
+}
+
+.ctd-field-group input[type="text"],
+.ctd-field-group input[type="number"],
+.ctd-field-group select,
+.ctd-field-group textarea {
+  width: 100%;
+  max-width: 400px;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.ctd-field-group textarea {
+  height: 100px;
+  resize: vertical;
+}
+
+.ctd-checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.ctd-checkbox-group input[type="checkbox"] {
+  margin: 0;
+}
+
+/* Product Tab */
+.ctd-size-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.ctd-size-options label {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 15px;
+  min-width: 60px;
+}
+
+.ctd-size-options label input {
+  margin-right: 5px;
+}
+
+#ctd_custom_sizes {
+  margin-top: 10px;
+}
+
+#ctd_custom_sizes p {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.ctd-remove-size {
+  color: #a00;
+  text-decoration: none;
+  font-weight: bold;
+  margin-left: 5px;
+}
+
+/* Settings Page */
+.ctd-settings-page .card {
+  background: #fff;
+  border: 1px solid #ccd0d4;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  padding: 20px;
+}
+
+.ctd-settings-page .card h2 {
+  margin-top: 0;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+#ctd-regenerate-result {
+  margin-top: 10px;
+  padding: 10px;
+  display: none;
+}
+
+#ctd-regenerate-result.success {
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+  border-radius: 3px;
+}
+
+#ctd-regenerate-result.error {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+  border-radius: 3px;
+}
+
+/* Database Status Table */
+#ctd-database-status-table {
+  margin-bottom: 15px;
+}
+
+.ctd-database-status h3 {
+  margin-top: 15px;
+  margin-bottom: 10px;
+}
+
+.ctd-database-actions {
+  margin-bottom: 15px;
+  display: flex;
+  gap: 10px;
+}
+
+#ctd-database-result {
+  margin-top: 15px;
+  padding: 10px;
+  display: none;
+}
+
+.ctd-status-indicator {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.ctd-status-ok {
+  background-color: #46b450;
+}
+
+.ctd-status-warning {
+  background-color: #ffb900;
+}
+
+.ctd-status-error {
+  background-color: #dc3232;
+}
+
+.ctd-table-exists {
+  color: #46b450;
+  font-weight: bold;
+}
+
+.ctd-table-missing {
+  color: #dc3232;
+  font-weight: bold;
+}
+
+.ctd-structure-ok {
+  color: #46b450;
+}
+
+.ctd-structure-error {
+  color: #dc3232;
+}
+
+/* Colors Container */
+.ctd-colors-container {
+  margin-bottom: 15px;
+}
+
+.ctd-color-row {
+  display: block;
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+/* FIXED: Color picker styling */
+.ctd-color-key {
+  max-width: 200px;
+}
+
+.wp-picker-container {
+  display: inline-block !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.wp-picker-container .wp-color-result.button {
+  margin: 0 6px 0 0 !important;
+}
+
+.wp-picker-container .wp-color-picker {
+  width: 80px !important;
+}
+
+.wp-picker-container .wp-picker-holder {
+  position: absolute !important;
+  z-index: 10 !important;
+}
+
+.ctd-color-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 10px;
+}
+
+.ctd-color-name {
+  flex: 1;
+}
+
+.ctd-color-preview {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.ctd-color-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 15px;
+  margin-bottom: 15px;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.ctd-color-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.ctd-color-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Setup Fees Table */
+.ctd-setup-fees-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+}
+
+.ctd-setup-fees-table th,
+.ctd-setup-fees-table td {
+  padding: 8px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.ctd-setup-fees-table th {
+  background-color: #f5f5f5;
+}
+
+.ctd-setup-fees-table input[type="number"] {
+  width: 100px;
+}
+
+/* Decoration Methods */
+.ctd-decoration-methods-container {
+  margin-bottom: 20px;
+}
+
+.ctd-decoration-method-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 10px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.ctd-decoration-method-key,
+.ctd-decoration-method-name {
+  flex: 1;
+}
+
+.ctd-decoration-method-fee {
+  width: 120px;
+}
+
+.ctd-decoration-method-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.ctd-decoration-method-actions button {
+  padding: 5px 10px;
+}
+
+.ctd-add-decoration-method {
+  margin-top: 10px;
+}
+
+/* Tier Pricing */
+.ctd-tier-pricing-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+}
+
+.ctd-tier-pricing-table th,
+.ctd-tier-pricing-table td {
+  padding: 8px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.ctd-tier-pricing-table th {
+  background-color: #f5f5f5;
+}
+
+.ctd-tier-row input {
+  width: 80px;
+}
+
+.ctd-add-tier {
+  margin-bottom: 15px;
+}
+
+/* Size Options */
+.ctd-size-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 15px;
+  margin-top: 10px;
+  padding: 15px;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.ctd-size-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10px 5px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  min-height: 80px;
+}
+
+.ctd-size-checkbox {
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+
+.ctd-size-checkbox input[type="checkbox"] {
+  margin: 0;
+  transform: scale(1.1);
+}
+
+.ctd-size-label {
+  font-weight: 600;
+  font-size: 12px;
+  color: #23282d;
+  margin-bottom: 8px;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.ctd-size-quantity {
+  width: 60px;
+  padding: 4px 6px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  font-size: 12px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.ctd-size-quantity:focus {
+  border-color: #0073aa;
+  box-shadow: 0 0 0 1px #0073aa;
+  outline: none;
+}
+
+/* Update the color size options grid to prevent overflow */
+.ctd-color-sizes {
+  margin-top: 10px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden; /* Prevent overflow */
+}
+
+.ctd-color-sizes h4 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* FIXED: Update the color size options grid for better alignment */
+.ctd-color-size-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 8px;
+  margin-bottom: 15px;
+  width: 100%;
+  align-items: start;
+}
+
+/* FIXED: Size item styling for better checkbox alignment */
+.ctd-color-size-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #fff;
+  min-height: 90px;
+  text-align: center;
+}
+
+/* FIXED: Checkbox label alignment */
+.ctd-color-size-item label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  font-weight: normal;
+  width: 100%;
+  text-align: center;
+  min-height: 24px;
+}
+
+/* FIXED: Checkbox alignment - specifically for all sizes including 2XS */
+.ctd-color-size-item label input[type="checkbox"] {
+  margin: 0 5px 0 0;
+  vertical-align: middle;
+  position: relative;
+  top: 0;
+  flex-shrink: 0;
+}
+
+/* FIXED: Size label text alignment */
+.ctd-color-size-item label span {
+  display: inline-block;
+  min-width: 30px;
+  text-align: left;
+}
+
+/* Adjust the size inventory container */
+.ctd-size-inventory {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: auto;
+}
+
+/* FIXED: Inventory input styling for better alignment */
+.ctd-inventory-input {
+  width: 60px !important;
+  min-width: 60px !important;
+  max-width: 60px !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  height: 32px !important;
+  padding: 4px 8px !important;
+  border: 1px solid #ddd !important;
+  border-radius: 4px !important;
+  background-color: #fff !important;
+  box-shadow: none !important;
+  text-align: center !important;
+  font-size: 14px !important;
+  color: #333 !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: textfield !important;
+  margin: 0 auto !important;
+}
+
+/* Remove spinner buttons completely from quantity inputs */
+.ctd-inventory-input::-webkit-inner-spin-button,
+.ctd-inventory-input::-webkit-outer-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0 !important;
+  display: none !important;
+  opacity: 0 !important;
+}
+
+/* Override the spinner styles to ensure they're completely removed */
+.ctd-inventory-input::-webkit-inner-spin-button,
+.ctd-inventory-input::-webkit-outer-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0 !important;
+  display: none !important;
+  opacity: 0 !important;
+}
+
+/* Ensure Firefox also doesn't show spinners */ \
+@-moz-document url-prefix() {
+  .ctd-inventory-input {
+    -moz-appearance: textfield !important;
+  }
+}
+
+.ctd-remove-custom-size {
+  margin-left: 5px;
+  color: #a00;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.ctd-add-custom-size-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+  margin-left: 15px; /* Add margin to prevent overlap */
+}
+
+.ctd-custom-size-input {
+  flex: 1;
+  max-width: 200px;
+}
+
+.ctd-custom-size {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 15px;
+  padding: 10px;
+  background: #f0f0f1;
+  border-radius: 4px;
+}
+
+.ctd-custom-size input[type="text"] {
+  width: 120px;
+  padding: 6px 8px;
+  font-size: 12px;
+}
+
+.ctd-custom-size .button {
+  padding: 4px 12px;
+  font-size: 12px;
+  height: auto;
+  line-height: 1.4;
+}
+
+/* Button Styles */
+.ctd-button {
+  display: inline-block;
+  padding: 8px 16px;
+  background: #0073aa;
+  color: #fff;
+  text-decoration: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.ctd-button:hover {
+  background: #005a87;
+  color: #fff;
+}
+
+.ctd-button.secondary {
+  background: #f0f0f1;
+  color: #23282d;
+  border: 1px solid #ccd0d4;
+}
+
+.ctd-button.secondary:hover {
+  background: #e0e0e0;
+  color: #23282d;
+}
+
+.ctd-button.danger {
+  background: #d63638;
+}
+
+.ctd-button.danger:hover {
+  background: #b32d2e;
+}
+
+.ctd-button.small {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+/* Database Management Styles */
+.ctd-database-section {
+  background: #fff;
+  border: 1px solid #ccd0d4;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.ctd-database-header {
+  padding: 15px 20px;
+  background: #f9f9f9;
+  border-bottom: 1px solid #eee;
+  font-weight: 600;
+}
+
+.ctd-database-content {
+  padding: 20px;
+}
+
+.ctd-database-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.ctd-database-status {
+  padding: 10px 15px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+
+.ctd-database-status.success {
+  background: #d1e7dd;
+  color: #0f5132;
+  border: 1px solid #badbcc;
+}
+
+.ctd-database-status.error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c2c7;
+}
+
+.ctd-database-status.warning {
+  background: #fff3cd;
+  color: #664d03;
+  border: 1px solid #ffecb5;
+}
+
+/* Progress Bar */
+.ctd-progress {
+  width: 100%;
+  height: 20px;
+  background: #f0f0f1;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 10px 0;
+}
+
+.ctd-progress-bar {
+  height: 100%;
+  background: #0073aa;
+  transition: width 0.3s ease;
+  border-radius: 10px;
+}
+
+/* Loading Spinner */
+.ctd-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #0073aa;
+  border-radius: 50%;
+  animation: ctd-spin 1s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes ctd-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .ctd-size-grid {
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: 10px;
+  }
+
+  .ctd-size-item {
+    min-height: 70px;
+    padding: 8px 4px;
+  }
+
+  .ctd-size-quantity {
+    width: 50px;
+    font-size: 11px;
+  }
+
+  .ctd-color-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .ctd-color-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .ctd-database-actions {
+    flex-direction: column;
+  }
+
+  .ctd-database-actions .ctd-button {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .ctd-admin-container {
+    margin: 10px 0;
+  }
+
+  .ctd-admin-content {
+    padding: 15px;
+  }
+
+  .ctd-size-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .ctd-custom-size {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ctd-custom-size input[type="text"] {
+    width: 100%;
+  }
+}
+
+/* Accessibility Improvements */
+.ctd-size-item:focus-within {
+  outline: 2px solid #0073aa;
+  outline-offset: 2px;
+}
+
+.ctd-button:focus {
+  outline: 2px solid #0073aa;
+  outline-offset: 2px;
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .ctd-size-item {
+    border-width: 2px;
+  }
+
+  .ctd-color-preview {
+    border-width: 3px;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .ctd-button,
+  .ctd-database-actions {
+    display: none;
+  }
+
+  .ctd-admin-container {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+}
